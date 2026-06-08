@@ -2,8 +2,7 @@
 title = "Название книги"        # обновляется через ./book.sh init
 authors = ["Автор"]
 language = "ru"
-src = "chapters"
-multilingual = false
+src = "."
 
 [build]
 build-dir = "book"
@@ -18,7 +17,7 @@ no-section-label = false
 fold.enable = true
 fold.level = 1
 search.enable = true
-search.limit = 30
+search.limit-results = 30
 search.teaser-word-count = 30
 
 [output.html.playground]

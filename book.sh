@@ -355,7 +355,7 @@ print(m.group(1) if m else 'ready')
     if [[ "$(fmt html)" == "True" || "$(fmt html)" == "true" ]]; then
         info "HTML..."
         pandoc "${file_list[@]}" "${pandoc_flags[@]}" \
-            --self-contained -o "${base}.html"
+            --embed-resources --standalone -o "${base}.html"
         success "→ ${base}.html"
     fi
 
@@ -427,8 +427,8 @@ print(m.group(1) if m else 'ready')
             esac
             [[ "$include" != "true" ]] && continue
 
-            local rel="${file#chapters/}"
-            local module; module=$(echo "$rel" | cut -d/ -f1)
+            local rel="${file}"
+            local module; module=$(echo "$file" | cut -d/ -f2)
             local title_line; title_line=$(grep -m1 "^# " "$file" 2>/dev/null | sed 's/^# //' || echo "$rel")
             local prefix=""
 
