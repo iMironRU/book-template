@@ -100,7 +100,8 @@ chapters/*.md
 | C4 | Типографика `typography-russian.md` vs `typography.md` | Один стандарт: плашки/кнопки (поток 3) обязаны совпадать со стилем врезок (поток 2). |
 | C5 | Pre-build хук | Запускать перед pandoc во **всех** форматах, не только print. |
 
-Эти решения зафиксировать в `spec/print-convergence.md` (шаг F3) перед Спринтом 1 печати.
+Эти решения зафиксированы в **`spec/print-convergence.md`** (шаг F3 ✅) — контракт-точка-правды
+для спринтов печати и бэклога runnable.
 
 ---
 
@@ -111,7 +112,8 @@ chapters/*.md
       `docs/review-workflow.md`. Откачена моя черновая печать (перекрыта handoff).
 - [x] **F2 (частично) — Сохранить артефакты в git.** `docs/handoff-v0.3-print/`
       (распакованный handoff), `docs/runnable-listings.md`, этот roadmap.
-- [ ] **F3 — `spec/print-convergence.md`** — свод решений C1–C5 как точка правды.
+- [x] **F3 — `spec/print-convergence.md`** — свод решений C1–C5 + контракт BSLexicon v1.0
+      как точка правды для печати (v0.3) и runnable (v0.4).
 - [ ] **F4 — Перенумерация в `template-changes.yaml`:** печать → v0.3.0,
       runnable → v0.4.0 (когда начнём их исполнять).
 - [ ] **v0.3.0 — Печать по спринтам** (см. `docs/handoff-v0.3-print/backlog/`):
