@@ -1,0 +1,22 @@
+output/
+book.md
+build-info.yaml
+*.log
+.DS_Store
+
+# Артефакты сборки
+dist/
+book/
+RELEASE_NOTES.md
+
+# Воркфлоу ревью (локальные рабочие файлы)
+reviews/
+docs/review-status.json
+.env
+.env.local
+
+# Claude Code (локальные настройки)
+.claude/settings.local.json
+
+# Генерируется book.sh при сборке сайта
+theme/version.js

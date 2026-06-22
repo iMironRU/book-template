@@ -354,6 +354,16 @@ cmd_build() {
 
     mkdir -p dist
 
+    # Штамп сборки: дата + git-ревизия. Доступен в шаблонах как $build-date$/$build-commit$.
+    local build_date build_commit
+    build_date=$(date -u '+%Y-%m-%d %H:%M UTC')
+    build_commit=$(git rev-parse --short HEAD 2>/dev/null || echo "—")
+    {
+        echo "build-date: \"${build_date}\""
+        echo "build-commit: \"${build_commit}\""
+        echo "build-filter: \"${filter}\""
+    } > build-info.yaml
+
     # Собрать список файлов по статусу
     local file_list=()
     while IFS= read -r -d '' file; do
@@ -384,6 +394,7 @@ print(m.group(1) if m else 'ready')
     # Общие флаги pandoc
     local pandoc_flags=(
         --metadata-file=metadata.yaml
+        --metadata-file=build-info.yaml
         --toc
         --toc-depth=3
         --standalone
@@ -468,7 +479,7 @@ print(m.group(1) if m else 'ready')
         fi
     fi
 
-    # DOCX A4 (требует assets/reference-a4.docx для полей; без него — стандартный DOCX)
+    # DOCX A4 (стиль-референс assets/reference-a4.docx — поля под печать)
     if [[ "$(fmt docx_a4)" == "True" || "$(fmt docx_a4)" == "true" ]]; then
         info "DOCX A4..."
         local ref_arg=()
@@ -482,7 +493,7 @@ print(m.group(1) if m else 'ready')
         if command -v mdbook &>/dev/null; then
             info "Сайт (mdBook)..."
             _generate_summary "$filter"
-            _inject_version "$version"
+            _inject_version "$version" "$build_commit"
             mdbook build
             success "→ book/ (mdBook site)"
         else
@@ -544,6 +555,9 @@ print(m.group(1) if m else 'ready')
 
 _inject_version() {
     local version="$1"
+    local commit="${2:-}"
+    local rev_suffix=""
+    [[ -n "$commit" && "$commit" != "—" ]] && rev_suffix=" · rev ${commit}"
     # Создать файл с версией, который mdBook включает в footer
     mkdir -p theme
     cat > theme/version.js << JS
@@ -551,7 +565,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var footer = document.querySelector('.nav-wrapper') || document.body;
     var versionBadge = document.createElement('div');
     versionBadge.style.cssText = 'text-align:center;padding:8px;font-size:0.8em;opacity:0.6;';
-    versionBadge.innerHTML = 'Версия <strong>v${version}</strong> · <a href="../CHANGELOG.md">Что изменилось</a>';
+    versionBadge.innerHTML = 'Версия <strong>v${version}</strong>${rev_suffix} · <a href="../CHANGELOG.md">Что изменилось</a>';
     document.body.appendChild(versionBadge);
 });
 JS
