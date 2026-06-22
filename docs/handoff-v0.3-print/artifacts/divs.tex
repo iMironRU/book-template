@@ -1,0 +1,97 @@
+% =========================================================================
+% theme/divs.tex
+%
+% LaTeX-окружения для семантических врезок учебника.
+% Соответствуют fenced divs в Markdown-исходнике:
+%
+%   ::: opredelenie ... :::         → \begin{opredelenie} ... \end{opredelenie}
+%   ::: napolyax ... :::             → \begin{napolyax} ... \end{napolyax}
+%   ::: primer ... :::               → \begin{primer} ... \end{primer}
+%   ::: kontrolnye-voprosy ... :::   → \begin{kontrolnyevoprosy} ... \end{kontrolnyevoprosy}
+%
+% Маппинг div-class → environment делается pandoc-filter'ом
+% theme/filters/divs-to-env.lua (см. Спринт 1).
+% =========================================================================
+
+\usepackage[most]{tcolorbox}
+
+% ---------- На полях. Вертикальная линейка слева, inline-заголовок ----------
+\newtcolorbox{napolyax}[1][]{
+  enhanced, blanker,
+  borderline west={1.4pt}{0pt}{rulecol},
+  left=12pt, right=4pt, top=2pt, bottom=2pt,
+  fontupper=\small,
+  before upper={\textbf{\small На полях.}\enspace},
+  before skip=10pt,
+  after skip=10pt,
+  #1
+}
+
+% ---------- Определение. Двойная линейка сверху и снизу ----------
+\newtcolorbox{opredelenie}[1][]{
+  enhanced, blanker,
+  borderline north={0.4pt}{0pt}{black},
+  borderline north={0.4pt}{2pt}{black},
+  borderline south={0.4pt}{0pt}{black},
+  borderline south={0.4pt}{2pt}{black},
+  left=4pt, right=4pt, top=6pt, bottom=6pt,
+  fontupper=\small,
+  before upper={\textbf{\small Определение.}\enspace},
+  before skip=10pt,
+  after skip=10pt,
+  #1
+}
+
+% ---------- Пример. Тонкая линейка слева, меньший кегль ----------
+\newtcolorbox{primer}[1][]{
+  enhanced, blanker,
+  borderline west={0.6pt}{0pt}{rulecol},
+  left=10pt, right=4pt, top=2pt, bottom=2pt,
+  fontupper=\footnotesize,
+  before upper={\textbf{\footnotesize Пример.}\enspace},
+  before skip=8pt,
+  after skip=8pt,
+  #1
+}
+
+% ---------- Контрольные вопросы — раздел в конце параграфа ----------
+% Использование:
+%   \begin{kontrolnyevoprosy}
+%     \item Первый вопрос?
+%     \item Второй?
+%   \end{kontrolnyevoprosy}
+\newenvironment{kontrolnyevoprosy}{%
+  \par\vspace{14pt}
+  \noindent{\bfseries Контрольные вопросы}\par
+  \vspace{-2pt}
+  \begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\topsep}{2pt}%
+}{%
+  \end{enumerate}\par\vspace{6pt}%
+}
+
+% ---------- Задание — то же что контрольные, но другой заголовок ----------
+\newenvironment{zadanie}{%
+  \par\vspace{14pt}
+  \noindent{\bfseries Задание}\par
+  \vspace{-2pt}
+  \begin{enumerate}\setlength{\itemsep}{0pt}\setlength{\topsep}{2pt}%
+}{%
+  \end{enumerate}\par\vspace{6pt}%
+}
+
+% ---------- Листинг 1С: рамка из двух горизонтальных линеек ----------
+% Используется как обёртка для \input{listings/lst-N.tex} (output pygments)
+\newtcolorbox{onecode}[1][]{
+  enhanced,
+  colback=white,
+  colframe=white,
+  frame hidden,
+  borderline north={0.4pt}{0pt}{rulecol},
+  borderline south={0.4pt}{0pt}{rulecol},
+  arc=0pt,
+  left=8pt, right=4pt, top=6pt, bottom=6pt,
+  before skip=8pt,
+  after skip=10pt,
+  fontupper=\ttfamily\footnotesize,
+  #1
+}

@@ -1,0 +1,196 @@
+% =========================================================================
+% theme/print.tex
+%
+% Pandoc-LaTeX-template для печатной версии книг серии «Школа 1С-инженеров».
+% Используется при сборке через ./book.sh build print.
+%
+% Параметризуется через metadata.yaml + frontmatter глав.
+% Доступные переменные pandoc: $title$, $subtitle$, $author$, $date$,
+% $lang$, $body$, $toc$, $header-includes$, и кастомные через -V key=value
+% или metadata.yaml top-level keys.
+%
+% Источник конструкции: sample.tex из handoff-пакета, prepared in
+% chat session before transfer.
+% =========================================================================
+
+\documentclass[$if(fontsize)$$fontsize$$else$11pt$endif$,openany,twoside]{memoir}
+
+% ---------- Полосы и поля (под клеевой переплёт КБС) ----------
+% A5: 148 × 210 мм. Поля асимметричные — больше у корешка.
+\setstocksize{210mm}{148mm}
+\settrimmedsize{210mm}{148mm}{*}
+\settrims{0mm}{0mm}
+\setlrmarginsandblock%
+  {$if(margin-gutter)$$margin-gutter$$else$20mm$endif$}%
+  {$if(margin-outer)$$margin-outer$$else$14mm$endif$}{*}
+\setulmarginsandblock%
+  {$if(margin-top)$$margin-top$$else$16mm$endif$}%
+  {$if(margin-bottom)$$margin-bottom$$else$20mm$endif$}{*}
+\setheadfoot{14pt}{18pt}
+\setheaderspaces{*}{10pt}{*}
+\checkandfixthelayout
+
+% ---------- Языки и шрифты ----------
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{russian}
+\setotherlanguage{english}
+
+\setmainfont{$if(font-main)$$font-main$$else$PT Serif$endif$}[Ligatures=TeX]
+\setsansfont{$if(font-sans)$$font-sans$$else$PT Sans$endif$}
+\setmonofont{$if(font-mono)$$font-mono$$else$JetBrains Mono$endif$}[Scale=0.85]
+
+% ---------- Микротипография ----------
+\usepackage{microtype}
+\frenchspacing
+\sloppybottom
+\clubpenalty=10000
+\widowpenalty=10000
+\raggedbottom
+
+% ---------- Колонтитулы twoside ----------
+\makepagestyle{book}
+\makeevenhead{book}{\thepage}{}{\small\itshape \leftmark}
+\makeoddhead{book}{\small\itshape \rightmark}{}{\thepage}
+\makeevenfoot{book}{}{}{}
+\makeoddfoot{book}{}{}{}
+\makeheadrule{book}{\textwidth}{0.4pt}
+\pagestyle{book}
+\nouppercaseheads
+\renewcommand{\chaptermark}[1]{\markboth{Гл.\,\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\S\,\thesection.\ #1}}
+
+% ---------- Заголовки глав ----------
+\chapterstyle{hangnum}
+\renewcommand{\chapnamefont}{\normalfont\scshape\small}
+\renewcommand{\chapnumfont}{\normalfont\bfseries\Large}
+\renewcommand{\chaptitlefont}{\normalfont\bfseries\LARGE}
+\setlength{\beforechapskip}{0pt}
+\setlength{\midchapskip}{14pt}
+\setlength{\afterchapskip}{28pt}
+
+% ---------- Оглавление ----------
+\renewcommand{\cftchapterfont}{\normalfont\bfseries}
+\renewcommand{\cftchapterpagefont}{\normalfont\bfseries}
+\renewcommand{\cftchapterleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftdotsep}{1.5}
+\setlength{\cftbeforechapterskip}{6pt}
+
+% ---------- Палитра (только серое, безопасное для офсета) ----------
+\usepackage{xcolor}
+\definecolor{codebg}{gray}{0.94}
+\definecolor{codeframe}{gray}{0.55}
+\definecolor{rulecol}{gray}{0.35}
+
+% ---------- Листинги: pygments bw-style ----------
+\usepackage{fancyvrb}
+\input{$if(highlight-style)$$highlight-style$$else$theme/highlight/pygstyle-bw$endif$}
+
+% ---------- TikZ для схем ----------
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, fit, backgrounds}
+\tikzset{
+  opnode/.style={draw=black, line width=0.4pt, rectangle, rounded corners=2pt,
+    inner sep=4pt, font=\footnotesize, align=center, minimum height=18pt},
+  srcnode/.style={draw=black, line width=0.4pt, rectangle, fill=black!8,
+    inner sep=4pt, font=\footnotesize\itshape, align=center, minimum height=18pt},
+  resnode/.style={draw=black, line width=0.8pt, rectangle, rounded corners=2pt,
+    inner sep=4pt, font=\footnotesize\bfseries, align=center, minimum height=18pt},
+  flowarrow/.style={-{Stealth[length=4pt, width=3pt]}, line width=0.4pt}
+}
+
+% ---------- Подписи к рисункам и листингам ----------
+\usepackage{caption}
+\captionsetup[figure]{font={small,it}, labelfont={small,it,bf}, labelsep=period,
+  justification=raggedright, singlelinecheck=false, skip=4pt}
+\renewcommand{\figurename}{Рис}
+
+\DeclareCaptionType{onecaption}[Листинг][Листинги]
+\captionsetup[onecaption]{font={small,it}, labelfont={small,it,bf}, labelsep=period,
+  justification=raggedright, singlelinecheck=false, skip=2pt}
+
+% ---------- Эпиграфы ----------
+\setlength{\epigraphwidth}{0.75\textwidth}
+\setlength{\epigraphrule}{0pt}
+\setlength{\beforeepigraphskip}{0pt}
+\setlength{\afterepigraphskip}{24pt}
+
+% ---------- Буквица ----------
+\usepackage{lettrine}
+\renewcommand{\LettrineFontHook}{\bfseries}
+\setlength{\DefaultNindent}{0pt}
+
+% ---------- QR-коды ----------
+$if(qr-enabled)$
+\usepackage{qrcode}
+\qrset{level=Q, link, padding}
+\newcommand{\qrrepobase}{$if(qr-repo)$$qr-repo$$else$$endif$}
+\newcommand{\qrtag}{$if(qr-tag)$$qr-tag$$else$main$endif$}
+\newcommand{\qrlst}[1]{\qrcode[height=14mm]{\qrrepobase/blob/\qrtag/listings/#1}}
+\newcommand{\qrchapter}[1]{\qrcode[height=16mm]{\qrrepobase/tree/\qrtag/chapters/#1}}
+$endif$
+
+% ---------- Врезки (Определение, На полях, Пример, Контрольные вопросы) ----------
+\input{theme/divs.tex}
+
+% ---------- Hyperref последним (важно для memoir) ----------
+\usepackage[unicode=true, colorlinks=false, hidelinks, pdfborder={0 0 0}]{hyperref}
+
+% ---------- Абзацный отступ и интерлиньяж ----------
+\setlength{\parindent}{1.2em}
+\setlength{\parskip}{0pt}
+\linespread{1.08}
+
+% ---------- Метаданные PDF из metadata.yaml ----------
+\hypersetup{
+  pdftitle={$title$$if(subtitle)$. $subtitle$$endif$},
+  pdfauthor={$author$},
+  pdfsubject={$if(subject)$$subject$$endif$},
+  pdfkeywords={$if(keywords)$$keywords$$endif$},
+  pdflang={$if(lang)$$lang$$else$ru$endif$}
+}
+
+% ---------- Пользовательские добавки из metadata header-includes ----------
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+% =========================================================================
+\begin{document}
+
+% ---------- Титул, оборот, оглавление: вставляется pandoc через partials ----------
+% TODO Sprint 2: подключить theme/partials/title-page.tex и title-verso.tex
+%      через $include-before$ и реализовать выпускные данные
+
+$if(title)$
+\frontmatter
+\thispagestyle{empty}
+\begin{center}
+  \vspace*{40mm}
+  {\Huge\bfseries $title$\par}
+  $if(subtitle)$\vspace{8pt}{\Large $subtitle$\par}$endif$
+  \vspace{20mm}
+  {\large $author$\par}
+  \vfill
+  $if(year)${\small $year$\par}$endif$
+\end{center}
+\clearpage
+$endif$
+
+$if(toc)$
+\tableofcontents*
+\clearpage
+$endif$
+
+\mainmatter
+
+% ---------- Тело книги ----------
+$body$
+
+% ---------- Аппарат: индекс, список литературы (опционально) ----------
+$if(indices)$
+\backmatter
+\printindex
+$endif$
+
+\end{document}

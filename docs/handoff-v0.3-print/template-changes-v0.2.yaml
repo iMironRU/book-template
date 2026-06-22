@@ -1,0 +1,98 @@
+version: 0.2.0
+date: 2026-07-XX  # подставить при релизе
+title: "Печатное издание серии"
+summary: |
+  Расширение book-template поддержкой малотиражного офсетного
+  печатного издания: pandoc-LaTeX-template, ч/б подсветка кода 1С,
+  семантические врезки учебника, QR-коды, русская типографика,
+  единая стратегия картинок, обновлённая SDD-документация.
+
+  Электронные форматы (EPUB/FB2/HTML/DOCX/electronic-PDF) не сломаны.
+
+changes:
+  added:
+    - theme/print.tex
+    - theme/divs.tex
+    - theme/highlight/onec_lexer.py
+    - theme/highlight/pygstyle-bw.tex
+    - theme/filters/highlight-onec.py
+    - theme/filters/russian-typo.py
+    - theme/filters/divs-to-env.lua
+    - theme/filters/tikz-figures.lua
+    - theme/filters/qr-links.py
+    - theme/filters/fb2-fallback.lua
+    - theme/partials/title-page.tex
+    - theme/partials/title-verso.tex
+    - theme/partials/colophon.tex
+    - theme/epub.css
+    - theme/reference.docx
+    - theme/mdbook-theme/
+    - theme/scripts/process-screenshots.sh
+    - theme/tikz-styles/ui-mockup.tex
+    - spec/print-edition.md
+    - docs/format-strategy.md
+    - docs/typography-russian.md
+    - docs/print-spec.md
+    - docs/divs-syntax.md
+    - docs/qr-syntax.md
+    - docs/backlog/v0.2/
+    - .claude/commands/print-check.md
+    - .claude/commands/template-spec-review.md
+
+  changed:
+    - book.sh                # добавлен таргет 'build print'
+    - metadata.yaml          # добавлены блоки 'print:' и 'qr:' с дефолтами
+    - CLAUDE.md              # смержена секция про печатное издание
+    - spec/constitution.md   # упоминание печатного издания
+    - README.md              # упоминание print-формата
+    - CHANGELOG.md           # запись v0.2.0
+    - .github/workflows/build-release.yml  # сборка print-target
+    - .github/workflows/build-nightly.yml  # сборка print-target
+
+  removed: []
+
+migration:
+  required:
+    - "Принять все файлы theme/ — это shared инфраструктура"
+    - "Принять все файлы docs/ — общая документация"
+    - "Принять spec/print-edition.md — общая конституция"
+    - "Принять .claude/commands/* — общие slash-команды"
+    - "Смержить CLAUDE.md (см. claude/CLAUDE-print-addendum.md в архиве)"
+    - "В metadata.yaml добавить блоки 'print:' и 'qr:' с дефолтами"
+    - "Обновить book.sh — взять новый таргет 'build print'"
+
+  optional:
+    - "Реальные ISBN на печать и EPUB (получаются отдельно)"
+    - "УДК/ББК (через библиотеку)"
+    - "Выбрать ICC-профиль типографии"
+
+  do_not_apply:
+    - "chapters/*           — книгоспецифичный контент"
+    - "metadata.yaml целиком — обновить только новые поля"
+    - "spec/specification.md — книгоспецифична"
+    - "spec/constitution.md  — книгоспецифична, но добавить раздел про печать"
+    - "README.md             — книгоспецифичен"
+    - "figures/*             — книгоспецифичные"
+    - "listings/*            — книгоспецифичные"
+
+compatibility:
+  minimum_book_template: "0.1.0"
+  recommended_book_template: "0.2.0"
+  breaking_changes: []
+  deprecations: []
+
+post_migration_checks:
+  - "./book.sh build print собирается без ошибок"
+  - "./book.sh build epub собирается как раньше"
+  - "Случайно выбранный параграф визуально соответствует samples/"
+  - "verapdf проходит для print-PDF"
+
+notes: |
+  Это major-расширение функциональности, но без breaking changes:
+  все существующие книги продолжают собираться в свои форматы
+  как раньше. Print-target добавляется опционально через
+  metadata.yaml.print.enabled = true.
+
+  Для двух готовых книг «1С как иностранный язык» этот sync
+  одновременно является point-of-truth для отладки миграции.
+  Если что-то идёт не так — это материал для багфикса v0.2.1.

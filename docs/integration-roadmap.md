@@ -1,0 +1,151 @@
+# Дорожная карта интеграции book-template (v0.2 → v0.4)
+
+> Единый источник правды по развитию шаблона. Зафиксирован, чтобы не потерять
+> решения, принятые в сессиях проработки. Обновлять при изменении плана.
+>
+> Статус на момент фиксации: **v0.2.0 закоммичен** (панель ревью). Печать и
+> runnable-листинги — спроектированы, ждут исполнения.
+
+---
+
+## 1. Откуда это взялось
+
+Аудит всех репозиториев топика [`imiron-1c-book`](https://github.com/topics/imiron-1c-book)
+(10 книг + локальные `web-dev-book`, `book-template`) выявил три поколения
+автоматизации и разрозненные «лучшие практики», которые надо свести в шаблон.
+
+### Карта репозиториев (на момент аудита)
+
+| Репо | Поколение | Сборка | Ревью | Сайт | Печать |
+|------|-----------|--------|-------|------|--------|
+| book-template | G3 (эталон) | `book.sh` | ← добавлено v0.2 | mdBook | pandoc -V |
+| 1c-semantic-reading | G3 | `book.sh` | `review.sh`+`status.sh` | mdBook | G3 |
+| 1c-registers-book | **G3+** | `book.sh` | 🏆 `review.py` (панель 5) | mdBook | G3 |
+| 1c-install | G3 | `book.sh` | — | mdBook | G3 |
+| 1c-razgovornik | G3 | `book.sh` | — | mdBook | G3 |
+| 1c-forms-reading | G2 | `build.yml` | `review.sh` | 🏆 MkDocs Material | a5 |
+| 1c-metadata-tree-book | G2 | `build.yml` (docker) | `review.sh` | — | a5 |
+| what-happens-when-click-1c | G2 | `build.yml` | — | — | a5 |
+| crypto-1c | G1 | — | `review.sh` + 2 спец-промпта | — | — |
+| web-dev-book | спец | 🏆 Makefile + scaffold.py | — | — | DejaVu |
+| chtenie-dannyh-zaprosy | — | ⚠️ локально пусто | — | — | — |
+| 1c-bsp-book | — | ⚠️ только SUMMARY.md | — | — | — |
+
+⚠️ Два репо локально почти пустые — нужно склонировать с GitHub либо найти,
+где лежит их gitignored-контент.
+
+### Что взяли «лучшее»
+
+- **Ревью:** `review.py` из `1c-registers-book` (панель из 5 моделей) — на порядок
+  мощнее одно-модельного `review.sh`. → внедрено в v0.2.0.
+- **Штамп сборки:** `build-info.yaml` (git-rev + дата) из G2 docker-pipeline. → v0.2.0.
+- **Печать:** отдельный handoff-пакет (см. `docs/handoff-v0.3-print/`) — Memoir-движок.
+  → v0.3.0.
+- **Runnable-листинги:** `docs/runnable-listings.md` — связка с песочницей. → v0.4.0.
+
+---
+
+## 2. Три рабочих потока
+
+| Поток | Версия | Суть | Статус |
+|---|---|---|---|
+| **1. Панель ревью** | v0.2.0 | `review.py` 5 моделей + промпты + `status.sh` + build-info | ✅ закоммичен |
+| **2. Печатное издание** | v0.3.0 | Memoir `print.tex`, врезки, ч/б подсветка 1С, QR, TikZ | 📦 handoff, 5 спринтов |
+| **3. Runnable-листинги** | v0.4.0 | книга → BSLexicon + bsl-language-server + Ярлыкон + QR | 📝 спека + бэклог |
+
+Порядок жёсткий: **runnable зависит от примитивов печати** (окружение `\onecode`,
+макрос `\qrlst`, врезки, типографика). Печать — фундамент.
+
+---
+
+## 3. Архитектура интеграции — общий хребет
+
+Главное: `print.tex` (поток 2) уже содержит крючки `\begin{onecode}` и `\qrlst{#1}`,
+которые нужны runnable-листингам (поток 3). Потоки 2 и 3 склеиваются в одну
+pandoc-цепочку. Поток 1 (ревью) стоит в стороне — он до сборки.
+
+```
+chapters/*.md
+   │
+   ▼  PRE-BUILD ХУК  ◄── поток 3 (runnable §5): до pandoc, для ВСЕХ форматов
+   ├─ извлечь fenced ```bsl
+   ├─ распарсить info-string (режим) + //@место (контекст вставки)
+   ├─ валидация по dictionaries/places.yaml + правила §3.5
+   ├─ lint через bsl-language-server (configs/book.bsl-language-server.json)
+   └─ runnable → URL BSLexicon → Ярлыкон (короткий) → цель QR
+   │
+   ▼  PANDOC  (--template=theme/print.tex для print)
+   │  объединённая цепочка theme/filters/ (2+3):
+   │   1. divs-to-env.lua       врезки → \begin{opredelenie}        ◄ поток 2
+   │   2. highlight-bsl.py      подсветка → \begin{onecode}          ◄ поток 2
+   │   3. insertion-place.lua   плашка «Куда вставить» из //@место   ◄ поток 3
+   │   4. sandbox-button.lua    кнопка web / \qrlst{} print          ◄ поток 3
+   │   5. qr-links.py           QR главы/листинга                    ◄ потоки 2+3
+   │   6. tikz / russian-typo / fb2-fallback / pandoc-crossref       ◄ поток 2
+   │
+   ▼  print.tex даёт примитивы:  \onecode,  \qrlst,  врезки,  типографика
+```
+
+---
+
+## 4. Конвергенция: коллизии потоков 2 и 3 (решить ДО старта печати)
+
+Чтобы поток 2 не забетонировал решения, которые поток 3 потом переделывает:
+
+| # | Коллизия | Решение |
+|---|----------|---------|
+| C1 | Язык блока: `onec` (печать) vs `bsl` (runnable) | Унифицировать на **`bsl`** (так зовётся валидатор). info-string ` ```bsl runnable ` несёт язык (→ подсветка) и режим (→ runnable). Лексер регистрируем под `bsl`. |
+| C2 | QR определён дважды (печать repo/tag; runnable shortlink песочницы) | Один генератор, два источника URL по режиму. `metadata.yaml` получает и `qr:`, и `bslexicon:`/`yarlykon:`. |
+| C3 | Папка фильтров `theme/filters/` vs `filters/` | Одна — `theme/filters/`, одна упорядоченная цепочка в `book.sh`. |
+| C4 | Типографика `typography-russian.md` vs `typography.md` | Один стандарт: плашки/кнопки (поток 3) обязаны совпадать со стилем врезок (поток 2). |
+| C5 | Pre-build хук | Запускать перед pandoc во **всех** форматах, не только print. |
+
+Эти решения зафиксировать в `spec/print-convergence.md` (шаг F3) перед Спринтом 1 печати.
+
+---
+
+## 5. План шагов (F-шаги)
+
+- [x] **F1 — Ревью-панель как v0.2.0.** Коммит `7ec3092`. Внедрено: `review.py`,
+      6 промптов, `status.sh`, build-info, `.env.example`, `.gitignore`,
+      `docs/review-workflow.md`. Откачена моя черновая печать (перекрыта handoff).
+- [x] **F2 (частично) — Сохранить артефакты в git.** `docs/handoff-v0.3-print/`
+      (распакованный handoff), `docs/runnable-listings.md`, этот roadmap.
+- [ ] **F3 — `spec/print-convergence.md`** — свод решений C1–C5 как точка правды.
+- [ ] **F4 — Перенумерация в `template-changes.yaml`:** печать → v0.3.0,
+      runnable → v0.4.0 (когда начнём их исполнять).
+- [ ] **v0.3.0 — Печать по спринтам** (см. `docs/handoff-v0.3-print/backlog/`):
+  - [ ] Спринт 1 — минимальный print-ready (`build print`, Memoir, подсветка, врезки)
+  - [ ] Спринт 2 — типографика + аппарат (титул, оборот, выпускные данные)
+  - [ ] Спринт 3 — картинки, схемы (TikZ), QR-автоматизация
+  - [ ] Спринт 4 — EPUB/HTML/DOCX/FB2 единообразно (epub.css, reference.docx, crossref)
+  - [ ] Спринт 5 — документация
+- [ ] **v0.4.0 — Runnable-листинги** (см. `docs/runnable-listings.md` §10):
+  - [ ] `dictionaries/places.yaml` + схема
+  - [ ] `configs/book.bsl-language-server.json`
+  - [ ] `tools/` extract/validate/lint/generate-links
+  - [ ] `filters/insertion-place.lua`, `filters/sandbox-button.lua`
+  - [ ] `.github/workflows/listings.yml`
+  - [ ] sweep по книгам серии (§11)
+
+---
+
+## 6. Что НЕ входит в book-template (открытые вопросы)
+
+Решаются вне шаблона (из handoff + runnable §12):
+
+- ISBN на печать и EPUB (разные издания), УДК/ББК/авторский знак
+- Правовой статус скриншотов UI 1С → временно TikZ-mockup'ы
+- Выбор типографии, ICC-профиль, тип переплёта, плотность бумаги
+- BSLexicon-контракт URL (`?code`/`?source`/`?embed`) — на стороне BSLexicon
+- Ярлыкон: book-namespace, метрики, политика ссылок — на стороне Ярлыкона
+- Решение оставлять ли FB2 для книг с кодом и врезками
+
+---
+
+## 7. Распространение в книги серии
+
+Через штатный `./book.sh sync` после каждого релиза. Принимать: `theme/`, `docs/`,
+`spec/print-edition.md`, `.claude/commands/*`, новые поля `metadata.yaml`.
+Не принимать: `chapters/*`, `spec/specification.md`, `README.md` — книгоспецифичны.
+Две готовые книги «1С как иностранный язык» (Модули 0–2) — тестовый полигон миграции.
