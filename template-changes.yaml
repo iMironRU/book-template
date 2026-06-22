@@ -49,4 +49,5 @@ v0.2.0:
     - ".gitignore"
   changed:
     - "book.sh"   # build-info штамп (build-date/commit) + version.js с rev
+    - "docs/style-guide.md"  # единый канон стиля серии (советский учебник, «мы»+«вы»)
   removed: []
