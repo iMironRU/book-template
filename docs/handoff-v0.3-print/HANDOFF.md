@@ -106,7 +106,7 @@ claude code .
 Существующая sync-механика именно для этого и сделана. В каждой книге серии:
 
 ```bash
-cd 1c-semantic-reading
+cd 1c-reading-code
 ./book.sh sync
 # скрипт покажет, какие файлы template обновились
 # принимаем: theme/, docs/, .claude/, spec/print-edition.md

@@ -97,7 +97,7 @@
   ```yaml
   qr:
     enabled: true
-    repo: "https://github.com/iMironRU/1c-semantic-reading"
+    repo: "https://github.com/iMironRU/1c-reading-code"
     tag: "v1.0"
   ```
 - [ ] Передавать в template через `-V qr-enabled=true -V qr-repo=... -V qr-tag=...`

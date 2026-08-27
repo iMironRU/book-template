@@ -19,24 +19,24 @@
 | Репо | Поколение | Сборка | Ревью | Сайт | Печать |
 |------|-----------|--------|-------|------|--------|
 | book-template | G3 (эталон) | `book.sh` | ← добавлено v0.2 | mdBook | pandoc -V |
-| 1c-semantic-reading | G3 | `book.sh` | `review.sh`+`status.sh` | mdBook | G3 |
-| 1c-registers-book | **G3+** | `book.sh` | 🏆 `review.py` (панель 5) | mdBook | G3 |
+| 1c-reading-code | G3 | `book.sh` | `review.sh`+`status.sh` | mdBook | G3 |
+| 1c-registers | **G3+** | `book.sh` | 🏆 `review.py` (панель 5) | mdBook | G3 |
 | 1c-install | G3 | `book.sh` | — | mdBook | G3 |
 | 1c-razgovornik | G3 | `book.sh` | — | mdBook | G3 |
-| 1c-forms-reading | G2 | `build.yml` | `review.sh` | 🏆 MkDocs Material | a5 |
-| 1c-metadata-tree-book | G2 | `build.yml` (docker) | `review.sh` | — | a5 |
+| 1c-reading-forms | G2 | `build.yml` | `review.sh` | 🏆 MkDocs Material | a5 |
+| 1c-reading-metadata | G2 | `build.yml` (docker) | `review.sh` | — | a5 |
 | what-happens-when-click-1c | G2 | `build.yml` | — | — | a5 |
-| crypto-1c | G1 | — | `review.sh` + 2 спец-промпта | — | — |
+| 1c-crypto | G1 | — | `review.sh` + 2 спец-промпта | — | — |
 | web-dev-book | спец | 🏆 Makefile + scaffold.py | — | — | DejaVu |
-| chtenie-dannyh-zaprosy | — | ⚠️ локально пусто | — | — | — |
-| 1c-bsp-book | — | ⚠️ только SUMMARY.md | — | — | — |
+| 1c-reading-queries | — | ⚠️ локально пусто | — | — | — |
+| 1c-bsp | — | ⚠️ только SUMMARY.md | — | — | — |
 
 ⚠️ Два репо локально почти пустые — нужно склонировать с GitHub либо найти,
 где лежит их gitignored-контент.
 
 ### Что взяли «лучшее»
 
-- **Ревью:** `review.py` из `1c-registers-book` (панель из 5 моделей) — на порядок
+- **Ревью:** `review.py` из `1c-registers` (панель из 5 моделей) — на порядок
   мощнее одно-модельного `review.sh`. → внедрено в v0.2.0.
 - **Штамп сборки:** `build-info.yaml` (git-rev + дата) из G2 docker-pipeline. → v0.2.0.
 - **Печать:** отдельный handoff-пакет (см. `docs/handoff-v0.3-print/`) — Memoir-движок.
@@ -233,7 +233,7 @@ chapters/*.md
 
 ### 9.2 Находка: дрейф в книге про регистры
 
-Аудит показал — стиль разъехался, и не только в тоне. `1c-registers-book` ушёл от
+Аудит показал — стиль разъехался, и не только в тоне. `1c-registers` ушёл от
 де-факто голоса серии:
 
 | Ось | Канон (как в книге про код) | registers (по факту в тексте) |
@@ -285,7 +285,7 @@ chapters/*.md
 канон выводит их из-под правил.
 
 Послаблений в `metadata.yaml` больше нет: линтер работает на книге в полной
-строгости, гейт в CI активен. Запись — в `1c-registers-book/spec/decisions.md`.
+строгости, гейт в CI активен. Запись — в `1c-registers/spec/decisions.md`.
 
 ### 9.7 Бэклог стиля
 

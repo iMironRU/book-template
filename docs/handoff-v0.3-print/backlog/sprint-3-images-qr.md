@@ -92,7 +92,7 @@
   ```yaml
   qr:
     enabled: true
-    repo: "https://github.com/iMironRU/1c-semantic-reading"
+    repo: "https://github.com/iMironRU/1c-reading-code"
     tag: "v1.0"             # автоподстановка при release
     listings_path: "listings"
     chapters_path: "chapters"
