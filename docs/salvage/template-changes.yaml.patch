@@ -1,0 +1,26 @@
+--- /dev/fd/11	2026-08-27 11:46:29
++++ book/template-changes.yaml	2026-06-22 13:04:54
+@@ -32,8 +32,6 @@
+   changed: []
+   removed: []
+ 
+-# v0.2.0 — панель ревью (мультимодельная) + штамп сборки.
+-# Печатное издание и runnable-листинги вынесены в v0.3.0 / v0.4.0 (отдельные потоки).
+ v0.2.0:
+   added:
+     - "scripts/review.py"
+@@ -44,10 +42,12 @@
+     - "scripts/prompts/openai-metaphor.md"
+     - "scripts/prompts/openai-tone.md"
+     - "scripts/prompts/openai-style.md"
++    - "assets/print/header.tex"
++    - "assets/print/reference-a4.docx"
+     - "docs/review-workflow.md"
+     - ".env.example"
+     - ".gitignore"
+   changed:
+-    - "book.sh"   # build-info штамп (build-date/commit) + version.js с rev
+-    - "docs/style-guide.md"  # единый канон стиля серии (советский учебник, «мы»+«вы»)
++    - "book.sh"
++    - "theme/book-extra.css"
+   removed: []

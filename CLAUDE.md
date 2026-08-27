@@ -37,13 +37,17 @@ docs/                             ← гайды для автора
 
 ```yaml
 ---
-status: draft      # draft | review | ready
+status: draft      # todo | draft | review | ready
 ---
 ```
 
+- `todo` — скелет параграфа: структура есть, текста нет
 - `draft` — написан, не финализирован
 - `review` — на проверке
 - `ready` — финальный, идёт в релиз
+
+Фильтры сборки: `ready` берёт только `ready`; `review` — `ready` и `review`;
+`all` — всё, включая скелеты (они помечаются в оглавлении).
 
 ---
 

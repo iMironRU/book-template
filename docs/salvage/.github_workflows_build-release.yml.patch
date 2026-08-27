@@ -1,0 +1,11 @@
+--- /dev/fd/11	2026-08-27 11:46:29
++++ book/.github/workflows/build-release.yml	2026-06-22 13:04:54
+@@ -57,7 +57,7 @@
+         run: |
+           sudo apt-get update -qq
+           sudo apt-get install -y --no-install-recommends \
+-            texlive-xetex texlive-lang-cyrillic texlive-fonts-recommended lmodern \
++            texlive-xetex texlive-lang-cyrillic texlive-fonts-recommended texlive-latex-extra lmodern \
+             fonts-jetbrains-mono fonts-paratype
+ 
+       - name: Собрать форматы

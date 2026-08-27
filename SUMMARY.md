@@ -2,6 +2,6 @@
 
 - [О книге](README.md)
 
-## intro
+## Пример параграфа
 
-- [Пример параграфа](chapters/00_intro/00-01_primer.md)
+- [Структура параграфа](chapters/00_intro/00-01_primer.md)

@@ -48,6 +48,24 @@ v0.2.0:
     - ".env.example"
     - ".gitignore"
   changed:
-    - "book.sh"   # build-info штамп (build-date/commit) + version.js с rev
+    - "book.sh"   # build-info штамп (build-date/commit) + version.js с rev, опциональный -H assets/print/header.tex,
+                  # заголовки SUMMARY и status из H1/H2 вместо транслита имён файлов,
+                  # обрезка заголовков по символам (кириллица больше не рвётся)
     - "docs/style-guide.md"  # единый канон стиля серии (советский учебник, «мы»+«вы»)
+    - "theme/book-extra.css" # callout-блоки, иерархия заголовков, стили печати страницы
+    - ".github/workflows/build-release.yml"  # texlive-latex-extra (нужен для колонтитулов)
+    - ".github/workflows/build-nightly.yml"  # texlive-latex-extra
+  removed: []
+
+# v0.2.1 — механическая защита канона стиля (integration-roadmap §9.4, слой 2).
+v0.2.1:
+  added:
+    - "scripts/style-lint.py"
+  changed:
+    - "book.sh"                              # команда lint + пункт меню; статус todo;
+                                             # сборка сайта из временного каталога (не тащит .git/.env в book/)
+    - "CLAUDE.md"                            # описан статус todo и фильтры сборки
+    - ".github/workflows/build-release.yml"  # гейт стиля перед сборкой
+    - ".github/workflows/build-nightly.yml"  # гейт стиля, не блокирующий
+    - "docs/style-guide.md"                  # ссылка на линтер
   removed: []

@@ -1,0 +1,45 @@
+--- /tmp/outer-book.sh	2026-08-27 11:46:29
++++ book/book.sh	2026-06-22 13:04:54
+@@ -405,6 +405,10 @@
+         pandoc_flags+=(--epub-cover-image=assets/img/cover.png)
+ 
+     fmt() { read_meta "formats.$1"; }
++
++    # Печатный header для PDF (колонтитулы, разрывы глав) — если есть
++    local pdf_header=()
++    [[ -f assets/print/header.tex ]] && pdf_header=(-H assets/print/header.tex)
+ 
+     # EPUB
+     if [[ "$(fmt epub)" == "True" || "$(fmt epub)" == "true" ]]; then
+@@ -440,7 +444,7 @@
+         if command -v xelatex &>/dev/null; then
+             info "PDF A5..."
+             local margin; margin=$(read_meta 'pdf.margin_a5')
+-            if pandoc "${file_list[@]}" "${pandoc_flags[@]}" \
++            if pandoc "${file_list[@]}" "${pandoc_flags[@]}" "${pdf_header[@]}" \
+                 -V papersize=a5 \
+                 -V "geometry:${margin}" \
+                 -V mainfont="$(read_meta 'pdf.font_main')" \
+@@ -462,7 +466,7 @@
+         if command -v xelatex &>/dev/null; then
+             info "PDF A4..."
+             local margin_a4; margin_a4=$(read_meta 'pdf.margin_a4')
+-            if pandoc "${file_list[@]}" "${pandoc_flags[@]}" \
++            if pandoc "${file_list[@]}" "${pandoc_flags[@]}" "${pdf_header[@]}" \
+                 -V papersize=a4 \
+                 -V "geometry:${margin_a4}" \
+                 -V mainfont="$(read_meta 'pdf.font_main')" \
+@@ -479,11 +483,11 @@
+         fi
+     fi
+ 
+-    # DOCX A4 (стиль-референс assets/reference-a4.docx — поля под печать)
++    # DOCX A4 (стиль-референс assets/print/reference-a4.docx — поля под печать)
+     if [[ "$(fmt docx_a4)" == "True" || "$(fmt docx_a4)" == "true" ]]; then
+         info "DOCX A4..."
+         local ref_arg=()
+-        [[ -f assets/reference-a4.docx ]] && ref_arg=(--reference-doc=assets/reference-a4.docx)
++        [[ -f assets/print/reference-a4.docx ]] && ref_arg=(--reference-doc=assets/print/reference-a4.docx)
+         pandoc "${file_list[@]}" "${pandoc_flags[@]}" "${ref_arg[@]}" -o "${base}_a4.docx"
+         success "→ ${base}_a4.docx"
+     fi
