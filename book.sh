@@ -128,6 +128,9 @@ language: ${language}
 license: "CC BY 4.0"
 version: "0.1.0"
 
+# Стабильный слаг книги для BSLexicon — заполняется, если книга ведёт tasks/
+book_id: ""
+
 template_repo: "https://github.com/iMironRU/book-template"
 template_version: "${tmpl_ver}"
 
@@ -740,6 +743,14 @@ PY
         read -rp "  " _confirm
         [[ "$_confirm" != "y" && "$_confirm" != "Y" ]] && { info "Отменено."; exit 0; }
     fi
+    if [[ -d tasks ]]; then
+        info "Проверяю задачи для BSLexicon..."
+        if ! python3 scripts/build-tasks.py --check; then
+            error "Задачи не прошли проверку — релиз остановлен."
+            exit 1
+        fi
+    fi
+
     info "Создаю коммит и тег..."
     git add metadata.yaml CHANGELOG.md
     git commit -m "release: v${new_version}"
@@ -911,6 +922,17 @@ cmd_lint() {
     python3 scripts/style-lint.py ${args[@]+"${args[@]}"}
 }
 
+# ─── TASKS ───────────────────────────────────────────────────────────────────
+cmd_tasks() {
+    if [[ ! -d tasks ]]; then
+        info "Папки tasks/ нет — книга не публикует задачи для BSLexicon."
+        return 0
+    fi
+    header "Сборка задач для BSLexicon"
+    echo ""
+    python3 scripts/build-tasks.py "$@"
+}
+
 # ─── HELP ────────────────────────────────────────────────────────────────────
 show_help() {
     echo ""
@@ -921,6 +943,8 @@ show_help() {
     echo -e "    ${CYAN}status${RESET}            Показать прогресс по главам"
     echo -e "    ${CYAN}build [фильтр]${RESET}    Собрать форматы (ready | review | all)"
     echo -e "    ${CYAN}lint [пути]${RESET}       Проверить стиль по канону (docs/style-guide.md)"
+    echo -e "    ${CYAN}summary${RESET}           Перегенерировать SUMMARY.md"
+    echo -e "    ${CYAN}tasks${RESET}             Собрать tasks/*.yaml в tasks.json (задачи BSLexicon)"
     echo -e "    ${CYAN}release${RESET}           Выпустить версию (changelog + git tag)"
     echo -e "    ${CYAN}sync${RESET}              Проверить и применить обновления шаблона"
     echo -e "    ${CYAN}help${RESET}              Эта справка"
@@ -969,6 +993,7 @@ case "$COMMAND" in
     build)   cmd_build "${1:-all}" ;;
     lint)    cmd_lint "$@" ;;
     summary) check_metadata; _generate_summary "${1:-all}"; success "→ SUMMARY.md" ;;
+    tasks)   check_metadata; cmd_tasks "$@" ;;
     release) cmd_release ;;
     sync)    cmd_sync ;;
     help)    show_help ;;
