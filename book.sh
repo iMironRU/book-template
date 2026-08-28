@@ -541,6 +541,24 @@ stage = sys.argv[1]
 cfg = open("book.toml", encoding="utf-8").read()
 cfg = re.sub(r'^src\s*=.*$',        'src = "."',            cfg, flags=re.M)
 cfg = re.sub(r'^build-dir\s*=.*$',  'build-dir = "../book"', cfg, flags=re.M)
+
+# Название и автор живут в metadata.yaml; в book.toml они оставались заглушкой
+# «Название книги» и в таком виде уезжали в шапку сайта и в <title> каждой
+# страницы. Подставляем на сборке, чтобы источник правды был один.
+import yaml
+meta = yaml.safe_load(open("metadata.yaml", encoding="utf-8")) or {}
+def put(key, value, quoted=True):
+    global cfg
+    if not value:
+        return
+    val = f'"{value}"' if quoted else value
+    if re.search(rf'^{key}\s*=', cfg, flags=re.M):
+        cfg = re.sub(rf'^{key}\s*=.*$', f'{key} = {val}', cfg, count=1, flags=re.M)
+
+put("title", str(meta.get("title") or "").replace('"', '\\"'))
+author = meta.get("author")
+if author:
+    put("authors", '["' + str(author).replace('"', '\\"') + '"]', quoted=False)
 open(f"{stage}/book.toml", "w", encoding="utf-8").write(cfg)
 PYSITE
 
