@@ -789,7 +789,7 @@ cmd_release() {
     {
         printf "## [v%s] — %s\n\n" "${new_version}" "${date}"
         for change in "${changes[@]}"; do
-            printf "- %s\n" "${change}"
+            printf -- "- %s\n" "${change}"
         done
         printf "\n"
     } > "$entry_file"
