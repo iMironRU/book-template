@@ -69,3 +69,16 @@ v0.2.1:
     - ".github/workflows/build-nightly.yml"  # гейт стиля, не блокирующий
     - "docs/style-guide.md"                  # ссылка на линтер
   removed: []
+
+# v0.2.2 — язык запросов исполним: пометка «запрос,песочница» и ссылки в песочницу.
+v0.2.2:
+  added:
+    - "scripts/sandbox-links.py"           # ссылки в песочницу под исполнимыми запросами
+  changed:
+    - "book.sh"                            # команда sandbox-links
+    - "scripts/style-lint.py"              # «запрос» — код, порог ширины 72
+    - "docs/style-guide.md"                # пометка «запрос,песочница», правило про учебную базу
+    - ".github/workflows/build-release.yml"  # сверка ссылок в песочницу
+    - ".github/workflows/build-nightly.yml"  # сверка ссылок в песочницу
+  removed: []
+
