@@ -82,3 +82,10 @@ v0.2.2:
     - ".github/workflows/build-nightly.yml"  # сверка ссылок в песочницу
   removed: []
 
+# v0.2.3 — значения параметров в ссылках на песочницу.
+v0.2.3:
+  added: []
+  changed:
+    - "scripts/sandbox-links.py"   # p.Имя из assets/sandbox/parameters.yaml; сверка ссылок учитывает их
+    - "docs/style-guide.md"        # где лежат значения параметров
+  removed: []
