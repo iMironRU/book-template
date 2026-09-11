@@ -89,3 +89,11 @@ v0.2.3:
     - "scripts/sandbox-links.py"   # p.Имя из assets/sandbox/parameters.yaml; сверка ссылок учитывает их
     - "docs/style-guide.md"        # где лежат значения параметров
   removed: []
+
+# v0.2.4 — EPUB открывается обложкой и сразу текстом.
+v0.2.4:
+  added: []
+  changed:
+    - "book.sh"                  # EPUB: без страницы оглавления в потоке книги и без титульного листа при обложке
+    - "assets/print/epub.css"    # без пустой страницы перед главой; обложка вписана в экран целиком
+  removed: []
