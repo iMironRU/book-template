@@ -150,3 +150,12 @@ v0.4.0:
   changed:
     - "theme/site-bslexicon.css"
     - "book.toml"
+
+v0.5.0:
+  added:
+    - "scripts/search-index.py"
+    - "theme/search-ru.js"
+  changed:
+    - "book.toml"
+    - "book.sh"
+    - "theme/site-bslexicon.css"
