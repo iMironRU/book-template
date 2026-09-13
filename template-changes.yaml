@@ -159,3 +159,13 @@ v0.5.0:
     - "book.toml"
     - "book.sh"
     - "theme/site-bslexicon.css"
+
+v0.6.0:
+  added:
+    - "scripts/site-meta.py"
+    - "scripts/og-image.py"
+    - "theme/page-nav.js"
+  changed:
+    - "book.sh"
+    - "book.toml"
+    - "theme/site-bslexicon.css"
