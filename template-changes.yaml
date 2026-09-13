@@ -169,3 +169,8 @@ v0.6.0:
     - "book.sh"
     - "book.toml"
     - "theme/site-bslexicon.css"
+
+v0.6.1:
+  changed:
+    - "scripts/search-index.py"
+    - "scripts/og-image.py"
