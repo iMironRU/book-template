@@ -142,3 +142,11 @@ v0.3.0:
     - "book.toml"                  # подключение стиля, тёмная тема по умолчанию
     - "theme/book-extra.css"       # размеры заголовков и ширина колонки убраны — они в новом файле
   removed: []
+
+v0.4.0:
+  added:
+    - "theme/answers.js"
+    - "theme/sidebar-tap.js"
+  changed:
+    - "theme/site-bslexicon.css"
+    - "book.toml"
