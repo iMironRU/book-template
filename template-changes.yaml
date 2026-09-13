@@ -183,3 +183,11 @@ v0.7.0:
     - "book.sh"
     - "theme/site-bslexicon.css"
     - "assets/print/epub.css"
+
+v0.7.1:
+  added:
+    - "scripts/reading-copy.py"
+  changed:
+    - "scripts/shot-slots.py"
+    - "book.sh"
+    - "CLAUDE.md"
