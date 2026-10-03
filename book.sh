@@ -1101,6 +1101,17 @@ cmd_sandbox_links() {
     python3 scripts/sandbox-links.py "$@"
 }
 
+# ─── QR ──────────────────────────────────────────────────────────────────────
+cmd_qr() {
+    if [[ ! -f scripts/qr-registry.py ]]; then
+        error "scripts/qr-registry.py не найден. Запустите: ./book.sh sync"
+        exit 1
+    fi
+    header "Реестр коротких кодов для qr.imiron.ru"
+    echo ""
+    python3 scripts/qr-registry.py "$@"
+}
+
 # ─── TASKS ───────────────────────────────────────────────────────────────────
 cmd_tasks() {
     if [[ ! -d tasks ]]; then
@@ -1125,6 +1136,7 @@ show_help() {
     echo -e "    ${CYAN}read <файлы>${RESET}      Копия параграфа для чтения (пометки — списком в конце)"
     echo -e "    ${CYAN}summary${RESET}           Перегенерировать SUMMARY.md"
     echo -e "    ${CYAN}sandbox-links${RESET}     Обновить ссылки в песочницу под блоками «запрос,песочница»"
+    echo -e "    ${CYAN}qr [--check]${RESET}      Реестр коротких кодов: главы, листинги, иллюстрации"
     echo -e "    ${CYAN}tasks${RESET}             Собрать tasks/*.yaml в tasks.json (задачи BSLexicon)"
     echo -e "    ${CYAN}release${RESET}           Выпустить версию (changelog + git tag)"
     echo -e "    ${CYAN}sync${RESET}              Проверить и применить обновления шаблона"
@@ -1175,6 +1187,7 @@ case "$COMMAND" in
     lint)    cmd_lint "$@" ;;
     read)    cmd_read "$@" ;;
     sandbox-links) cmd_sandbox_links "$@" ;;
+    qr)      check_metadata; cmd_qr "$@" ;;
     summary) check_metadata; _generate_summary "${1:-all}"; success "→ SUMMARY.md" ;;
     tasks)   check_metadata; cmd_tasks "$@" ;;
     release) cmd_release ;;
