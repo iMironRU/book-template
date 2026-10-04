@@ -26,3 +26,7 @@ book-template-v0.2-handoff.zip
 
 # Собирается из tasks/*.yaml командой ./book.sh tasks
 tasks.json
+
+# Промежуточное дерево сборки: шмуцтитулы и сдвинутые заголовки
+.build-src/
+.build-structure/

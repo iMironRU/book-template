@@ -375,22 +375,30 @@ cmd_build() {
         echo "build-filter: \"${filter}\""
     } > build-info.yaml
 
-    # Собрать список файлов по статусу
+    # Собрать список файлов: вводная часть, шмуцтитулы глав, параграфы.
+    # Порядок и структуру считает scripts/book-structure.py — он же опускает
+    # заголовки параграфов на уровень, чтобы главой стала глава, а не параграф.
     local file_list=()
-    while IFS= read -r -d '' file; do
-        local status
-        status=$(python3 -c "
+    if [[ -f scripts/book-structure.py ]]; then
+        while IFS= read -r file; do
+            [[ -n "$file" ]] && file_list+=("$file")
+        done < <(python3 scripts/book-structure.py --filter "$filter")
+    else
+        while IFS= read -r -d '' file; do
+            local status
+            status=$(python3 -c "
 import re
 content = open('${file}').read()
 m = re.search(r'^---.*?status:\s*(\w+).*?---', content, re.DOTALL)
 print(m.group(1) if m else 'ready')
 " 2>/dev/null || echo "ready")
-        case "$filter" in
-            ready)  [[ "$status" == "ready" ]] && file_list+=("$file") ;;
-            review) [[ "$status" == "ready" || "$status" == "review" ]] && file_list+=("$file") ;;
-            all)    file_list+=("$file") ;;
-        esac
-    done < <(find chapters -name "*.md" ! -name "_*.md" -print0 | sort -z)
+            case "$filter" in
+                ready)  [[ "$status" == "ready" ]] && file_list+=("$file") ;;
+                review) [[ "$status" == "ready" || "$status" == "review" ]] && file_list+=("$file") ;;
+                all)    file_list+=("$file") ;;
+            esac
+        done < <(find chapters -name "*.md" ! -name "_*.md" -print0 | sort -z)
+    fi
 
     if [[ ${#file_list[@]} -eq 0 ]]; then
         warn "Нет файлов для сборки с фильтром '${filter}'"
@@ -430,6 +438,8 @@ print(m.group(1) if m else 'ready')
         --metadata-file=build-info.yaml
         --toc
         --toc-depth=3
+        # Глава — это глава, а не параграф: уровень выставляет book-structure.py
+        --top-level-division=chapter
         --standalone
         # Служебные комментарии (полезная нагрузка для песочницы) читателю
         # не нужны: в вёрстке они невидимы, но в EPUB уезжают мёртвым грузом.

@@ -198,3 +198,10 @@ v0.8.0:
   changed:
     - "book.sh"
     - "docs/style-guide.md"
+
+v0.8.1:
+  added:
+    - "scripts/book-structure.py"
+  changed:
+    - "book.sh"
+    - ".gitignore"
