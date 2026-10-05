@@ -29,4 +29,5 @@ tasks.json
 
 # Промежуточное дерево сборки: шмуцтитулы и сдвинутые заголовки
 .build-src/
+.build-print/
 .build-structure/

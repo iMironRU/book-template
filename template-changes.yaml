@@ -205,3 +205,12 @@ v0.8.1:
   changed:
     - "book.sh"
     - ".gitignore"
+
+v0.9.0:
+  added:
+    - "assets/print/header.tex"
+    - "scripts/print-build.py"
+  changed:
+    - "book.sh"
+    - "scripts/qr-registry.py"
+    - ".gitignore"
